@@ -67,7 +67,7 @@ export default function AudioAnalysisPage() {
       formData.append("file", audioFile)
 
       const response = await axios.post(
-        "http://localhost:8000/audio_predict",
+        "https://genetalk-audio-backend.onrender.com/audio_predict",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
