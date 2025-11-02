@@ -8,7 +8,7 @@ import { AnimatedButton } from "@/components/animated-button"
 import { ResultsDisplay } from "@/components/results-display"
 
 interface AnalysisResult {
-  reply?: string
+  message?: string
 }
 
 export default function TextAnalysisPage() {
@@ -29,19 +29,19 @@ export default function TextAnalysisPage() {
     setResult(null)
 
     try {
-      const data  = await axios.post("https://chatbot-back-1.onrender.com/chat", {
+      const { data } = await axios.post("https://chatbot-back-1.onrender.com/chat", {
         message: text,
       })
 
-      console.log("API Response:", data)
+      console.log("API Response:", data.reply)
 
-      // ✅ Extract the `reply` text from your backend
+      // ✅ Store response in `message` (not `reply`)
       setResult({
-        reply: data.reply || "No response received from the server.",
+        message: data.reply || "No response received from the server.",
       })
     } catch (err: any) {
       console.error("Error:", err)
-      if (err.response) { 
+      if (err.response) {
         setError(
           `Server responded with error: ${err.response.status} ${err.response.statusText}`
         )
@@ -137,11 +137,20 @@ export default function TextAnalysisPage() {
               <Sparkles className="text-[#2563eb]" size={20} />
               <h2 className="text-2xl font-semibold text-[#2563eb]">Analysis Results</h2>
             </div>
+
+            {/* ✅ This will now correctly display the message */}
             <ResultsDisplay
-              result={result ? { message: result.reply } : null}
+              result={result}
               loading={loading}
               error={error}
             />
+
+            {/* 👇 Optional fallback direct display in case ResultsDisplay is not showing */}
+            {result && (
+              <div className="mt-3 text-gray-700 whitespace-pre-wrap text-sm border-t border-gray-100 pt-3">
+                {result.message}
+              </div>
+            )}
           </div>
         ) : null}
       </div>
